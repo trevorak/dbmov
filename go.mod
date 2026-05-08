@@ -1,4 +1,4 @@
-module github.com/trevor/dbmov
+module github.com/trevorak/dbmov
 
 go 1.26.2
 

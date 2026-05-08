@@ -8,11 +8,11 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/trevor/dbmov/internal/output"
+	"github.com/trevorak/dbmov/internal/output"
 
-	"github.com/trevor/dbmov/internal/db"
-	"github.com/trevor/dbmov/internal/dump"
-	"github.com/trevor/dbmov/internal/manifest"
+	"github.com/trevorak/dbmov/internal/db"
+	"github.com/trevorak/dbmov/internal/dump"
+	"github.com/trevorak/dbmov/internal/manifest"
 )
 
 func init() {

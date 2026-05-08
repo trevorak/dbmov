@@ -4,9 +4,9 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/trevor/dbmov/internal/output"
+	"github.com/trevorak/dbmov/internal/output"
 
-	"github.com/trevor/dbmov/internal/version"
+	"github.com/trevorak/dbmov/internal/version"
 )
 
 var conn ConnConfig

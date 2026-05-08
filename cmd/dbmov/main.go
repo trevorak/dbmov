@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/trevor/dbmov/internal/cli"
+	"github.com/trevorak/dbmov/internal/cli"
 )
 
 func main() {
