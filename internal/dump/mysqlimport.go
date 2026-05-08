@@ -9,7 +9,7 @@ import (
 	"os/exec"
 )
 
-// RunMySQL feeds dumpFile to mysql stdin (suitable for dumps created with --databases).
+// RunMySQL feeds dumpFile to mysql stdin
 func RunMySQL(ctx context.Context, defaultsFile, dumpFile, mysqlPath string, stderr io.Writer) error {
 	bin := mysqlPath
 	if bin == "" {

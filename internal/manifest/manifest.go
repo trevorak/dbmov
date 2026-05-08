@@ -26,7 +26,7 @@ type Entry struct {
 // FileName is the manifest filename stored in a backup directory.
 const FileName = "manifest.json"
 
-// Write encodes m to path (usually backupDir/manifest.json).
+// Write encodes m to path (backupDir/manifest.json).
 func Write(path string, m *Manifest) error {
 	b, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {

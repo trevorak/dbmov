@@ -8,16 +8,15 @@ import (
 	"os/exec"
 )
 
-// MysqldumpOptions configures mysqldump invocation.
+// MysqldumpOptions configures mysqldump.
 type MysqldumpOptions struct {
-	SetGTIDPurged         string // e.g. OFF, ON, AUTO
+	SetGTIDPurged         string // OFF, ON, AUTO
 	ColumnStatisticsFalse bool   // pass mysqldump --column-statistics=0 (MySQL 8+ client only)
 	MysqldumpPath         string // default "mysqldump"
 }
 
-// MysqldumpArgs builds the argument list (for tests and execution).
+// MysqldumpArgs builds the argument list.
 // defaultsFile is a temp option file; passed as --defaults-file so it is the only file read
-// (avoids merged [mysqldump] options from /etc and ~ that can break cross-flavour clients).
 func MysqldumpArgs(defaultsFile, database, resultFile string, o MysqldumpOptions) []string {
 	gtid := o.SetGTIDPurged
 	if gtid == "" {
