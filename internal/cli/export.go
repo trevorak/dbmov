@@ -31,6 +31,7 @@ func init() {
 	cmd.Flags().DurationVar(&exportDumpTimeout, "dump-timeout", 0, "per-database mysqldump timeout (0 = no limit)")
 	cmd.Flags().StringVar(&exportGTIDPurged, "set-gtid-purged", "OFF", "passed to mysqldump --set-gtid-purged")
 	cmd.Flags().BoolVar(&exportDumpColumnStatsOff, "dump-column-statistics-off", false, `pass mysqldump --column-statistics=0 (MySQL 8+ client dumping older servers; errors on mysqldump that lacks this flag)`)
+	cmd.Flags().BoolVar(&exportGzip, "gzip", false, `write *.sql.gz (gzip-compressed); import decompresses automatically`)
 	rootCmd.AddCommand(cmd)
 }
 
@@ -44,6 +45,7 @@ var (
 	exportDumpTimeout        time.Duration
 	exportGTIDPurged         string
 	exportDumpColumnStatsOff bool
+	exportGzip               bool
 )
 
 func runExport(cmd *cobra.Command, _ []string) error {
@@ -108,6 +110,7 @@ func runExport(cmd *cobra.Command, _ []string) error {
 		SetGTIDPurged:         exportGTIDPurged,
 		ColumnStatisticsFalse: exportDumpColumnStatsOff,
 		MysqldumpPath:         exportMysqldump,
+		Compress:              exportGzip,
 	}
 
 	m := &manifest.Manifest{
@@ -120,8 +123,12 @@ func runExport(cmd *cobra.Command, _ []string) error {
 	var hadErr bool
 	var nOK int
 
+	ext := ".sql"
+	if exportGzip {
+		ext = ".sql.gz"
+	}
 	for i, dbName := range names {
-		sqlFile := filepath.Join(outDir, safeFileName(dbName)+".sql")
+		sqlFile := filepath.Join(outDir, safeFileName(dbName)+ext)
 		rel, relErr := filepath.Rel(outDir, sqlFile)
 		if relErr != nil {
 			rel = filepath.Base(sqlFile)

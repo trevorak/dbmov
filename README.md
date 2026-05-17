@@ -10,7 +10,7 @@ go install github.com/trevorak/dbmov@latest
 ## Build
 
 ```bash
-go build -o dbmov ./cmd/dbmov
+go build -o dbmov .
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ export DBMOV_PASSWORD='secret'
 ./dbmov export --to ./backup --user username --host db.example.com
 ```
 
-**Import** from that directory (reads `manifest.json` if present, otherwise all `*.sql` files):
+**Import** from that directory (reads `manifest.json` if present, otherwise all `*.sql` and `*.sql.gz` files):
 
 ```bash
 export DBMOV_PASSWORD='secret'
@@ -37,6 +37,7 @@ export DBMOV_PASSWORD='secret'
 - `--include` / `--exclude` — repeated shell globs (same rules as `filepath.Match`). If `--include` is set, a database must match at least one include pattern.
 - `--ssl-mode` — `disabled`, `preferred`, `skip-verify`, `required`, `verify-ca`, `verify-identity`.
 - `--dump-column-statistics-off` — passes `mysqldump --column-statistics=0`. Use only when **MySQL 8+ mysqldump** warns or fails dumping an **older** server; **MariaDB and older mysqldump do not support this flag** (leave it unset, the default).
+- `--gzip` (export) — write `*.sql.gz` via gzip; **import** decompresses `.gz` dumps automatically.
 - `--continue-on-error` — continue after a failed dump or restore; exits non-zero if any step failed.
 - `--mysqldump` / `--mysql` — override binary paths.
 

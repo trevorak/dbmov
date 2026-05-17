@@ -45,3 +45,15 @@ func TestMysqldumpArgsOrder(t *testing.T) {
 		t.Fatalf(`first arg must be %q (only option file read), got %v`, want, args)
 	}
 }
+
+func TestMysqldumpArgsEmptyResultFileOmitsResultFile(t *testing.T) {
+	args := MysqldumpArgs("/cnf", "db", "", MysqldumpOptions{})
+	for _, a := range args {
+		if strings.HasPrefix(a, "--result-file=") {
+			t.Fatalf("unexpected --result-file in %v", args)
+		}
+	}
+	if !strings.Contains(strings.Join(args, " "), "--databases") {
+		t.Fatal(args)
+	}
+}

@@ -21,7 +21,7 @@ func init() {
 		Short: "Restore databases from a backup directory produced by dbmov export",
 		RunE:  runImport,
 	}
-	cmd.Flags().StringVar(&impFrom, "from", "", "backup directory containing manifest.json and *.sql (required)")
+	cmd.Flags().StringVar(&impFrom, "from", "", "backup directory containing manifest.json and *.sql / *.sql.gz (required)")
 	cmd.Flags().StringVar(&impMysql, "mysql", "mysql", "path to mysql client binary")
 	cmd.Flags().BoolVar(&impContinueOnError, "continue-on-error", false, "keep restoring after a failure")
 	rootCmd.AddCommand(cmd)
@@ -64,19 +64,31 @@ func runImport(cmd *cobra.Command, _ []string) error {
 		}
 	}
 	if len(jobs) == 0 {
-		matches, err := filepath.Glob(filepath.Join(fromDir, "*.sql"))
-		if err != nil {
-			return err
+		seen := make(map[string]string)
+		var paths []string
+		for _, pat := range []string{"*.sql", "*.sql.gz"} {
+			matches, err := filepath.Glob(filepath.Join(fromDir, pat))
+			if err != nil {
+				return err
+			}
+			paths = append(paths, matches...)
 		}
-		sort.Strings(matches)
-		for _, p := range matches {
+		sort.Strings(paths)
+		for _, p := range paths {
 			base := filepath.Base(p)
-			name := strings.TrimSuffix(base, ".sql")
+			name := dump.DatabaseFromDumpFilename(base)
+			if name == "" {
+				continue
+			}
+			if prev, ok := seen[name]; ok {
+				return output.Errorf("ambiguous dump files for database %q: %s and %s", name, prev, p)
+			}
+			seen[name] = p
 			jobs = append(jobs, job{dbName: name, file: p})
 		}
 	}
 	if len(jobs) == 0 {
-		return output.Errorf("no manifest entries and no *.sql files in %s", fromDir)
+		return output.Errorf("no manifest entries and no *.sql / *.sql.gz files in %s", fromDir)
 	}
 
 	w := cmd.OutOrStdout()
